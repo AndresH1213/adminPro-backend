@@ -13,6 +13,9 @@ app.use( cors() );
 // Data Base
 dbConnection();
 
+// Public dir
+app.use(express.static('public'))
+
 // reading and parsing body
 app.use( express.json() );
 
