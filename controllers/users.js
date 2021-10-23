@@ -4,13 +4,19 @@ const User = require('../models/User');
 const { generateJWT } = require('../helpers/jwt');
 
 exports.getUsers = async (req, res) => {
+
+    const upTo = Number(req.query.upto) || 0;
     
-    const user = await User.find({}, 'name email google');
+    // Execute the two asynchronus task at the time.
+    const [ users, total ] = await Promise.all([
+        User.find({}, 'name email role google img').skip( upTo ).limit( 5 ),
+        User.countDocuments()    
+    ])
 
     res.status(400).json({
         ok: true,
-        user,
-        uid: req.uid
+        users,
+        total
     })
 };
 
