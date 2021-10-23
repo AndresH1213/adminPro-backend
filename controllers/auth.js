@@ -83,6 +83,18 @@ exports.googleSignIn = async (req, res= response) => {
             ok:false,
             mgs: 'token no es correcto'
         })
-    }
-    
+    } 
+};
+
+exports.renewToken = async (req, res = response) => {
+
+    const uid = req.uid;
+
+    // generate token JWT
+    const token = await generateJWT( uid );
+
+    res.json({
+        ok: true,
+        token
+    });
 }

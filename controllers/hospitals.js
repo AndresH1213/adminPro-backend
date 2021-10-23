@@ -13,11 +13,39 @@ exports.getHospitals = async (req, res = response) => {
     })
 }
 
-exports.updateHospital = (req, res = response) => {
-    res.json({
-        ok: true,
-        msg: 'updateHospitales'
-    })
+exports.updateHospital = async (req, res = response) => {
+    const id = req.params.id;
+    const uid = req.uid;
+    try {
+        const hospitalDB = await Hospital.findById(id);
+
+        if (!hospitalDB) {
+            return  res.status(404).json({
+                ok: false,
+                msg: 'Comunicate with the administrator'
+            })
+        }
+
+        const hospitalChanges = {
+            ...req.body,
+            user: uid
+        }
+
+        const hospitalUpdate = await Hospital.findByIdAndUpdate(id, hospitalChanges, { new: true }); 
+
+        res.json({
+            ok: true,
+            msg: 'updateHospitales',
+            hospital: hospitalUpdate
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Comunicate with the administrator'
+        })
+    }
 }
 
 exports.createHospitals = async (req, res = response) => {
@@ -45,9 +73,30 @@ exports.createHospitals = async (req, res = response) => {
 
 }
 
-exports.deleteHospitals = (req, res = response) => {
-    res.json({
-        ok: true,
-        msg: 'deleteHospitales'
-    })
+exports.deleteHospitals = async (req, res = response) => {
+    const id = req.params.id
+    try {
+        
+        const hospitalDB = await Hospital.findById(id);
+
+        if (!hospitalDB) {
+            return  res.status(404).json({
+                ok: false,
+                msg: 'There is no such hospital'
+            })
+        };
+        await Hospital.findByIdAndDelete( id );
+
+        res.json({
+            ok: true,
+            msg: 'Hospital deleted'
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Comunicate with the admin'
+        })
+        console.log(error)
+    }
 }
