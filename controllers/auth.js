@@ -3,7 +3,9 @@ const User = require("../models/User");
 const bcrypt = require('bcryptjs');
 const { generateJWT } = require("../helpers/jwt");
 const { googleVerify } = require("../helpers/google-verify");
-const { findOne } = require("../models/User");
+const { getMenu } = require('../helpers/menu-frontend');
+
+
 
 exports.login = async (req, res = response) => {
 
@@ -16,7 +18,7 @@ exports.login = async (req, res = response) => {
         if ( !userDB ) {
             return res.status(404).json({
                 ok: false,
-                msg: 'Email invalid'
+                msg: 'Email invalid',
             });
         }
 
@@ -35,7 +37,8 @@ exports.login = async (req, res = response) => {
 
         res.json({
             ok: true,
-            token
+            token,
+            menu: getMenu(userDB.role)
         })
         
     } catch (error) {
@@ -76,7 +79,8 @@ exports.googleSignIn = async (req, res= response) => {
 
         res.json({
             ok: true,
-            token
+            token,
+            menu: getMenu(user.role),
         })
     } catch (error) {
         res.json({
@@ -98,6 +102,7 @@ exports.renewToken = async (req, res = response) => {
     res.json({
         ok: true,
         token,
-        user
+        user,
+        menu: getMenu(user.role),
     });
 }
