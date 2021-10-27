@@ -30,7 +30,7 @@ exports.updateDoctor = async (req, res = response) => {
             user: uid
         };
 
-        const doctorUpdate = await Doctor.findOneAndUpdate(id, doctorChanges, {new:true});
+        const doctorUpdate = await Doctor.findOneAndUpdate({_id: id}, doctorChanges, {new:true});
 
         res.json({
             ok: true,
@@ -97,4 +97,27 @@ exports.deleteDoctors = async (req, res = response) => {
         })
         console.log(error)
     }
+}
+
+exports.getByIdDoctors = async (req, res = response) => {
+
+    const id = req.params.id;
+
+    try {
+        
+        const doctor = await Doctor.findById(id)
+                            .populate('user','name img')
+                            .populate('hospital','name img');
+        res.json({
+            ok: true,
+            doctor
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Doctor not found'
+        })
+    }
+
 }

@@ -13,7 +13,7 @@ exports.getUsers = async (req, res) => {
         User.countDocuments()    
     ])
 
-    res.status(400).json({
+    res.json({
         ok: true,
         users,
         total
@@ -45,12 +45,12 @@ exports.createUsers = async (req, res = response) => {
         await user.save();
 
         // generate token JWT
-        const jwt = await generateJWT(user._id);
+        const token = await generateJWT(user._id);
 
         res.status(200).json({
             ok: true,
             user,
-            jwt
+            token
         });
 
     } catch (err) {
@@ -80,16 +80,25 @@ exports.updateUser = async (req, res= response) => {
 
         // Update
         // if password and google are sent we don't change it
-        const { password, google, ...fields } = req.body;
-        console.log(userDB.t, req.body.email)
+        const { password, google, email, ...fields } = req.body;
+
         if ( userDB.email !== req.body.email ) {
-            const existEmail = await User.findOne({ email: req.body.email });
+            const existEmail = await User.findOne({ email: email });
             if ( existEmail ){
                 return res.status(400).json({
                     ok: false,
                     msg: 'Theres already one user with that email'
                 })
             }
+        }
+        
+        if (!userDB.google) {
+            fields.email = email;
+        } else if ( userDB.email !== email) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Google users can not change their email'
+            })
         }
         
         const userActualized = await User.findByIdAndUpdate( uid, fields, { new: true } );
@@ -124,11 +133,11 @@ exports.deleteUser = async (req, res = response ) => {
             });
         }
 
-        await User.findOneAndDelete(uid);
+        await User.findOneAndDelete({'_id':uid});
 
         res.json({
             ok: true,
-            msg: 'Usuario deleted'
+            msg: 'User deleted'
         })
 
     } catch (error) {

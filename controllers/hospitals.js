@@ -4,12 +4,12 @@ const Hospital = require('../models/Hospital');
 
 exports.getHospitals = async (req, res = response) => {
 
-    const hospitales = await Hospital.find()
+    const hospitals = await Hospital.find()
                                 .populate('user', 'name img')
 
     res.json({
         ok: true,
-        hospitales
+        hospitals
     })
 }
 

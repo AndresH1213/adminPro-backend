@@ -26,7 +26,6 @@ exports.getSearch = async (req, res = response) => {
 
 exports.getCollection = async (req, res = response) => {
     const { table, query } = req.params;
-    console.log(table, query)
     const regex = new RegExp(query, 'i');
 
     let data = [];

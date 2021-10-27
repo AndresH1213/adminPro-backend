@@ -1,2 +1,14 @@
 node_modules
 .env
+
+uploads/hospitals/**.jpg
+uploads/hospitals/**.png
+uploads/hospitals/**.jpeg
+
+uploads/doctors/**.jpg
+uploads/doctors/**.png
+uploads/doctors/**.jpeg
+
+uploads/users/**.jpg
+uploads/users/**.png
+uploads/users/**.jpeg
